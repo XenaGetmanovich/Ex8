@@ -76,8 +76,22 @@ def complete_variations(variations):
     return variations
 
 
-rw = []
-blcks = []
-inputs = [1, 1, 0], [2]
-print(get_row_variations([-1, -1, -1, -1, -1, -1, -1, -1], [1, 2, 1]))
-# complete_variations(rw)
+def get_intersection_row(rows):
+    if len(rows) == 0:
+        return []
+    return get_intersection_row_helper(rows, 0)
+
+
+def get_intersection_row_helper(rows, index):
+    if index + 1 >= len(rows):
+        # if we got to the last list in the rows we return the list
+        return rows[index]
+    ultimate_list = get_intersection_row_helper(rows, index + 1)
+    for i in range(len(rows[index])):  # goes over the lists and if the the elements
+        # are not the same replace with -1
+        if ultimate_list[i] != rows[index][i]:
+            ultimate_list[i] = - 1
+    return ultimate_list
+
+
+print(get_intersection_row([[], []]))
