@@ -4,13 +4,15 @@ from ex8_helper import *
 def get_row_variations(row, blocks):
     options = list()
     for i in range(len(row)):  # check if block + index > len
+        copy_of_row = row[:] #creating a copy of the row so that the original
+        # won't be changed
         if i == 0 or row[i-1] != 1:
             # if the previous block is filled,
             # if we run the function it will give wrong variation, because the
             #  variation will have extra filled block.
             #  but it also means we already checked that variation during the
             # previous as we increase the index in the recursion
-            row_variations_helper(row, i, blocks, 0, blocks[0], options)
+            row_variations_helper(copy_of_row, i, blocks, 0, blocks[0], options)
     return complete_variations(options)
 
 
@@ -94,4 +96,5 @@ def get_intersection_row_helper(rows, index):
     return ultimate_list
 
 
-print(get_intersection_row([[], []]))
+
+
