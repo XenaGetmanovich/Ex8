@@ -3,9 +3,28 @@ from ex8_helper import *
 
 def get_row_variations(row, blocks):
     options = list()
+    colored_squares = 0
+    final_coloured_squares = 0
+    copy_of_row = row[:]  # creating a copy of the row so that the original
+    # won't be changed
+# if all the blocks that need to be filled are filled, then we have nothing
+# to do but to return the row as the only option (with 0 instead of 1)'
+    if not blocks and not row:
+        return [[]]
+    if not blocks:
+        for num in row:
+            options.append(0)
+    for square in row:
+        if square == 1:
+            colored_squares += square
+    for block in blocks:
+        final_coloured_squares += block
+    if colored_squares == final_coloured_squares:
+        return complete_variations([copy_of_row]) # the function changes the input
+    # so I
+
     for i in range(len(row)):  # check if block + index > len
-        copy_of_row = row[:] #creating a copy of the row so that the original
-        # won't be changed
+
         if i == 0 or row[i-1] != 1:
             # if the previous block is filled,
             # if we run the function it will give wrong variation, because the
@@ -50,10 +69,19 @@ def row_variations_helper(row, index, blocks, num_of_block, block_size
 
 
 def row_variations_next_block(row, index, blocks, num_of_block, variations):
+    filled = 0
+    supposed_to_be_filled = 0
+    for num in row:
+        if num == 1:
+            filled += 1
+    for block in blocks:
+        supposed_to_be_filled += block
     if num_of_block >= len(blocks) - 1:
         # means we successfully checked the last block and we could fit it
         # in the row, so the current variation is valid
-        variations.append(row[:])  # send a shallow copy of the row because we
+        if not filled > supposed_to_be_filled:
+            variations.append(row[:])
+        # send a shallow copy of the row because we
         # return the old values to continue checking
     elif not index >= len(row):
         for i in range(len(row) - index):
@@ -68,18 +96,31 @@ def row_variations_next_block(row, index, blocks, num_of_block, variations):
 
 
 def complete_variations(variations):
-    if variations:
+    new_variations = []
+    if variations and type(variations[0]) == list:
         for variation in variations:
+            updated_variation = []
             for i in range(len(variation)):
                 if variation[i] == -1:
-                    variation[i] = 0
+                    updated_variation.append(0)
+                else:
+                    updated_variation.append(variation[i])
+            new_variations.append(updated_variation)
+    elif len(variations):
+
+        for i in range(len(variations)):
+            if variations[i] == -1:
+                new_variations.append(0)
+            else:
+                new_variations.append(variations[i])
     else:
-        return [[]]
-    return variations
+        return []
+
+    return new_variations
 
 
 def get_intersection_row(rows):
-    if len(rows) == 0:
+    if len(rows) == 0 or len([rows[0]]) == 0:
         return []
     return get_intersection_row_helper(rows, 0)
 
@@ -87,13 +128,45 @@ def get_intersection_row(rows):
 def get_intersection_row_helper(rows, index):
     if index + 1 >= len(rows):
         # if we got to the last list in the rows we return the list
-        return rows[index]
+        return rows[index].copy()
     ultimate_list = get_intersection_row_helper(rows, index + 1)
     for i in range(len(rows[index])):  # goes over the lists and if the the elements
         # are not the same replace with -1
         if ultimate_list[i] != rows[index][i]:
             ultimate_list[i] = - 1
     return ultimate_list
+
+
+def conclude_from_constraints(board, constraints):
+    if len(board) == 0:
+        board = [board]  # otherwise the function sends an int to the
+        # other functions
+    if not constraints or not constraints[0]:
+        return
+    for i in range(len(board)):  # going over the rows in the board
+        options = get_row_variations(board[i], constraints[0][i])
+        board[i] = get_intersection_row(options)
+
+
+def solve_easy_nonogram():
+    pass
+
+
+row = [[-1, -1, 1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1]]
+
+
+blocks = [[[1, 2], [1, 2], [2]], [[4], [1], [1], [1, 3], [2]]]
+
+
+
+
+
+# options = get_row_variations(row[0], blocks[0])
+# print(options)
+# print(get_intersection_row(options))
+conclude_from_constraints(row, blocks)
+print(row)
+# print(get_intersection_row([[]]))
 
 
 
